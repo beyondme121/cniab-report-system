@@ -1,68 +1,169 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 项目开发记录
 
-## Available Scripts
+## 1. 初始化项目环境配置
 
-In the project directory, you can run:
+- 1.1 引入 antd
 
-### `yarn start`
+`yarn add react-app-rewired customize-cra babel-plugin-import`
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- 1.2 配置config-overrides.js
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+```js
+const { override, fixBabelImports, addLessLoader } = require('customize-cra');
 
-### `yarn test`
+module.exports = override(
+  fixBabelImports('import', {
+    libraryName: 'antd',
+    libraryDirectory: 'es',
+    style: true,
+  }),
+  addLessLoader({
+    javascriptEnabled: true,
+    modifyVars: { '@primary-color': '#1DA57A' },
+  }),
+);
+```
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- 1.3 修改package.json 的scripts
 
-### `yarn build`
+```js
+"scripts": {
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
+    "eject": "react-scripts eject"
+},
+```
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- 1.4 安装 less 和 less-loader自动就可以使用了,基于1.2的配置
+- 1.5 配置react-redux
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+```js
+// index.js
+import { Provider } from 'react-redux'
+import store from './redux/store'
+ReactDOM.render(<Provider store={store}>
+  <App />
+</Provider>, document.getElementById('root'));
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+> store.js
 
-### `yarn eject`
+```js
+import { createStore, applyMiddleware } from 'redux'
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+import { composeWithDevTools } from 'redux-devtools-extension'
+import thunk from 'redux-thunk'
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+import combineReducers from './reducers'
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+export default createStore(combineReducers, composeWithDevTools(applyMiddleware(thunk)))
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+> reducers.js
 
-## Learn More
+```js
+import { combineReducers } from 'redux'
+import { INCREMENT } from './action-types'
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+const initCount = 0
+function counter(state = initCount, action) {
+  switch (action.type) {
+    case INCREMENT:
+      return state + action.payload
+    default:
+      return state
+  }
+}
 
-To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
+const initUser = {
+  name: 'sanfeng'
+}
+function user(state = initUser, action) {
+  return state
+}
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+export default combineReducers({
+  counter,
+  user
+})
 
-### Analyzing the Bundle Size
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+> actions.js
 
-### Making a Progressive Web App
+```js
+import { INCREMENT } from './action-types'
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+export const increment = num => ({
+  type: INCREMENT,
+  payload: num
+})
+```
 
-### Advanced Configuration
+> action-types.js
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+```js
+export const INCREMENT = 'increment'
+```
 
-### Deployment
+> App.js中connect store中的数据
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+```js
+import { connect } from 'react-redux'
+import { increment } from './redux/actions'
 
-### `yarn build` fails to minify
+const mapStateToProps = state => ({
+  counter: state.counter,
+  user: state.user
+})
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+const mapDispatchToProps = {
+  increment
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App)
+
+// 元素上绑定事件 触发action
+<Button type="primary" onClick={() => handleAdd(5)}>加5</Button>
+// 
+function handleAdd(num) {
+  props.increment(num)
+}
+```
+
+
+
+- 1.6 配置react-router-dom
+
+配置好router之后就是路由设计, 在根组件中App.js中设计路由
+
+```js
+import React from 'react';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect
+} from 'react-router-dom'
+
+import ReduxTest from './test/test-redux'
+import Login from './test/test-router-login'
+import Main from './test/test-router-main'
+
+function App() {
+  return (
+    <Router>
+      <Switch>
+        <Redirect from='/' to='/main' exact />
+        <Route path='/login' component={Login} />
+        <Route path='/main' component={Main} />
+        <Route path='/redux' component={ReduxTest} />
+      </Switch>
+    </Router>
+  )
+}
+export default App
+```
+
