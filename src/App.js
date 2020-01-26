@@ -2,23 +2,18 @@ import React from 'react';
 import {
   BrowserRouter as Router,
   Switch,
-  Route,
-  Redirect
+  Route
 } from 'react-router-dom'
 
-import ReduxTest from './test/test-redux'
-import Login from './test/test-router-login'
-import Main from './test/test-router-main'
-
+import Login from './pages/login'
+import Admin from './pages/admin'
 
 function App() {
   return (
     <Router>
       <Switch>
-        <Redirect from='/' to='/main' exact />
-        <Route path='/login' component={Login} />
-        <Route path='/main' component={Main} />
-        <Route path='/redux' component={ReduxTest} />
+        <Route path="/login" component={Login} />
+        <Route path="/" component={Admin} />
       </Switch>
     </Router>
   )

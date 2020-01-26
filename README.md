@@ -167,3 +167,22 @@ function App() {
 export default App
 ```
 
+
+
+## 2. 避坑
+
+### 1. 使用antd布局让页面高度100%
+
+> 在reset.css
+
+```js
+/* 让页面的整体高度100%, html,body,#root缺一不可 */
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+```
+
