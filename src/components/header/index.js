@@ -1,13 +1,53 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
+import { connect } from 'react-redux'
 import { Layout, Menu } from 'antd'
 
 import logo from '../../assets/images/ABB_Logo.png'
 import './index.less'
+import menuConfig from '../../config/menuConfig'
+
+import LinkButton from '../link-button'
+
+// action
+import { logout } from '../../redux/actions'
+
 
 const { Header } = Layout
+const { Item } = Menu
 
-export default function MyHeader() {
+function HeaderNav(menuList) {
+  const { pathname } = useLocation()
+  return (
+    <Menu
+      theme="light"
+      mode="horizontal"
+      style={{ lineHeight: '50px' }}
+      selectedKeys={[pathname]}
+    >
+      {
+        menuList.map(menu => {
+          return (
+            <Item key={menu.key}>
+              <span>
+                <Link to={menu.key} >
+                  {menu.title}
+                </Link>
+              </span>
+            </Item>
+          )
+        })
+      }
+    </Menu>
+  )
+}
+
+function MyHeader(props) {
+
+  const handleLogout = () => {
+    props.logout()
+  }
+
   return (
     <Header>
       <div className="header-left">
@@ -17,30 +57,24 @@ export default function MyHeader() {
         </Link>
       </div>
       <div className="header-middle">
-        <Menu
-          theme="light"
-          mode="horizontal"
-          defaultSelectedKeys={['1']}
-          style={{ lineHeight: '50px' }}
-        >
-          <Menu.Item key="1">nav 1</Menu.Item>
-          <Menu.Item key="2">nav 2</Menu.Item>
-          <Menu.Item key="3">nav 3</Menu.Item>
-        </Menu>
+        {HeaderNav(menuConfig)}
       </div>
       <div className="header-right">
-        <Menu
-          theme="light"
-          mode="horizontal"
-          // defaultSelectedKeys={['1']}
-          style={{ lineHeight: '50px' }}
-        >
-          <Menu.Item key="1">nav 1</Menu.Item>
-          <Menu.Item key="2">nav 2</Menu.Item>
-          <Menu.Item key="3">nav 3</Menu.Item>
-        </Menu>
+        <div className="login-user">
+          张三
+        </div>
+        <LinkButton onClick={handleLogout}>
+          注销
+        </LinkButton>
       </div>
 
     </Header>
   )
 }
+
+const mapStateToProps = state => ({})
+const mapDispatchToProps = dispatch => ({
+  logout: () => dispatch(logout())
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(MyHeader)

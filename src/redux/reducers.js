@@ -1,25 +1,43 @@
 import { combineReducers } from 'redux'
-import { INCREMENT } from './action-types'
+import storeUtils from '../utils/storeUtils'
+import { RECEIVE_USER, LOGOUT } from './action-types'
 
-const initCount = 0
-function counter(state = initCount, action) {
+const initUser = storeUtils.getUser()
+
+function user(state = initUser, action) {
   switch (action.type) {
-    case INCREMENT:
-      return state + action.payload
+    case RECEIVE_USER:
+      return action.data
+    case LOGOUT:
+      return {}
     default:
       return state
   }
 }
 
-
-const initUser = {
-  name: 'sanfeng'
-}
-function user(state = initUser, action) {
-  return state
-}
-
 export default combineReducers({
-  counter,
   user
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// const initCount = 0
+// function counter(state = initCount, action) {
+//   switch (action.type) {
+//     case INCREMENT:
+//       return state + action.payload
+//     default:
+//       return state
+//   }
+// }
