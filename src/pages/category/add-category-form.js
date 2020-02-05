@@ -10,7 +10,7 @@ function AddCategoryForm(props) {
 
   useEffect(() => {
     props.setForm(props.form)
-  }, [])
+  }, [props])
 
   return (
     <Form>

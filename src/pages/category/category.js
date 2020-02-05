@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Card, Icon, Button, Table, message, Modal } from 'antd'
 import LinkButton from '../../components/link-button'
 
@@ -21,38 +21,13 @@ export default function Category() {
   const [categorys, setCategorys] = useState([])
   const [subCategorys, setSubCategorys] = useState([])
   // 表格字段
-  const [columns, setColumns] = useState([])
 
   // 保存当前的分类记录或叫做对象
   let categoryRef = useRef({})
   let formRef = useRef({})
 
-  // 表格字段信息
-  const columnRef = useRef([
-    {
-      title: '分类名称',
-      dataIndex: 'categoryName',
-      key: 'categoryName'
-    },
-    {
-      title: '操作',
-      width: 300,
-      render: (category) => {
-        return (
-          <>
-            <LinkButton onClick={() => showUpdateModal(category)}>修改</LinkButton>
-            {
-              parentId === 0 ? <LinkButton onClick={() => showSubCategory(category)}>查看下级分类</LinkButton> : null
-            }
-          </>
-        )
-      }
-    }
-  ])
-
-
   // 获取一级或者二级分类列表
-  const getCategorys = async (pid) => {
+  const getCategorys = useCallback(async (pid) => {
     setLoading(true)
     pid = pid || parentId
     const result = await reqCategorys(pid)
@@ -67,7 +42,7 @@ export default function Category() {
     } else {
       message.error('未成功获取分类列表')
     }
-  }
+  }, [parentId])
 
   const showSubCategory = async (category) => {
     // 更新状态
@@ -143,36 +118,33 @@ export default function Category() {
     formRef.current.resetFields()
   }
 
-  // 初始化 Table的列信息 函数
-  const initColums = () => {
-    setColumns([
-      {
-        title: '分类名称',
-        dataIndex: 'categoryName',
-        key: 'categoryName'
-      },
-      {
-        title: '操作',
-        width: 300,
-        render: (category) => {
-          return (
-            <>
-              <LinkButton onClick={() => showUpdateModal(category)}>修改</LinkButton>
-              {
-                parentId === 0 ? <LinkButton onClick={() => showSubCategory(category)}>查看下级分类</LinkButton> : null
-              }
-            </>
-          )
-        }
+  // 初始化 Table的列信息 
+  const columns = [
+    {
+      title: '分类名称',
+      dataIndex: 'categoryName',
+      key: 'categoryName'
+    },
+    {
+      title: '操作',
+      width: 300,
+      render: (category) => {
+        return (
+          <>
+            <LinkButton onClick={() => showUpdateModal(category)}>修改</LinkButton>
+            {
+              parentId === 0 ? <LinkButton onClick={() => showSubCategory(category)}>查看下级分类</LinkButton> : null
+            }
+          </>
+        )
       }
-    ])
-  }
+    }
+  ]
 
   // 副作用函数
   useEffect(() => {
-    initColums()
     getCategorys()
-  }, [parentId, parentName])
+  }, [getCategorys])
 
   // Card左侧标题
   const title = parentId === 0 ? '一级分类列表' : (
@@ -210,7 +182,6 @@ export default function Category() {
           onCancel={handleCancel}
         >
           <UpdateCategoryForm categoryName={categoryRef.current} setForm={(form) => {
-            console.log("UpdateCategoryForm: ", form)
             formRef.current = form
           }} />
         </Modal>

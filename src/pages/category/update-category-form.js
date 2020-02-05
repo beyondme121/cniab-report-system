@@ -18,9 +18,8 @@ function UpdateCategoryForm(props) {
 
   // 只需要执行一次
   useEffect(() => {
-    console.log("form: ", form)
     setForm(form)
-  }, [])
+  }, [setForm, form])
 
   return (
     <Form>

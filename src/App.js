@@ -7,13 +7,13 @@ import {
 
 import Login from './pages/login'
 import Admin from './pages/admin'
-import Example from './test/test-lifecycle'
+// import Example from './test/test-lifecycle'
 
 function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/test" component={Example} />
+        {/* <Route path="/test" component={Example} /> */}
         <Route path="/login" component={Login} />
         <Route path="/" component={Admin} />
       </Switch>
