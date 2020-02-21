@@ -28,6 +28,7 @@ export default function Details(props) {
 
   useEffect(() => {
     async function fetchData() {
+      // 通过产品的小pc查询产品分类名称 多级分类
       const { status, data } = await reqProductHierachyByPC(Profitcenter)
       let { ProductGroupText: _ProductGroupText, PGShortName: _PGShortName } = data[0]
       if (status === 0) {

@@ -34,3 +34,6 @@ export const reqSearchProductListByPage = ({ pageNum, PAGE_SIZE, searchType, sea
 
 // 4. 根据产品小pc查询产品的所属的各个层级 通过数据库冗余
 export const reqProductHierachyByPC = Profitcenter => ajax(BASE + '/product/getProductHierachy', { Profitcenter })
+
+// 5. 根据产品id更新产品状态
+export const reqUpdateProductStatus = (id, status) => ajax(BASE + '/product/update', { id, status }, 'POST')

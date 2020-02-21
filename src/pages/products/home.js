@@ -7,13 +7,15 @@ import {
   Table,
   Icon,
   Row,
-  Col
+  Col,
+  message
 } from 'antd'
 import LinkButton from '../../components/link-button'
 import {
   // reqAllProducts,
   reqProductListByPage,
-  reqSearchProductListByPage
+  reqSearchProductListByPage,
+  reqUpdateProductStatus
 } from '../../api'
 import { PAGE_SIZE } from '../../config/constants'
 
@@ -66,7 +68,7 @@ export default function Home(props) {
   )
 
   const extra = (
-    <Button type="primary">
+    <Button type="primary" onClick={() => props.history.push('/sales/product/addupdate')}>
       <Icon type="plus" />
       添加商品
     </Button>
@@ -116,10 +118,11 @@ export default function Home(props) {
     {
       title: '商品状态',
       render: product => {
-        const { status } = product
+        const { _id, status } = product
+        const newState = status === 1 ? 2 : 1
         return (
           <span>
-            <Button type="primary">
+            <Button type="primary" onClick={() => updateProductStatus(_id, newState)}>
               {status === 1 ? '下线' : '上架'}
             </Button>
             <span>
@@ -135,7 +138,7 @@ export default function Home(props) {
         return (
           <span>
             <LinkButton onClick={() => props.history.push('/sales/product/detail', product)}>详情</LinkButton>
-            <LinkButton>修改</LinkButton>
+            <LinkButton onClick={() => props.history.push('/sales/product/addupdate', product)}>修改</LinkButton>
           </span>
         )
       }
@@ -177,8 +180,16 @@ export default function Home(props) {
       setProducts(result.data.list)
       setTotal(result.data.total)
     }
-  }, [searchType, searchText])  // 
+  }, [searchType, searchText])
 
+  // 根据产品id更新产品状态
+  const updateProductStatus = async (id, status) => {
+    const result = await reqUpdateProductStatus(id, status)
+    if (result.status === 0) {
+      message.success('产品状态更新成功')
+      getProductsByPage(pageNumRef.current)
+    }
+  }
 
   // 副作用
   useEffect(() => {

@@ -20,7 +20,8 @@ export default [
       {
         title: 'Product',
         key: '/sales/product',
-        icon: 'bars'
+        icon: 'bars',
+        isParent: 1
       },
       {
         title: 'Region',

@@ -300,11 +300,20 @@ const ctl_getSearchProductListByPage = async ({ pageNum, pageSize, ...rest }) =>
 
 设计状态, 请求接口，修改状态
 
+### 6. 添加商品
+
+1. 路由设计已经在之前写好，在Home组件中的“添加商品”按钮中增加路由跳转的事件props.history.push(url)
+2. 静态页面   使用了什么antd组d
 
 
 
+### 7. 商品分类的级联菜单
 
+1. 容器组件(AddUpdateProduct)挂载后, 请求分类列表数据`getCategorys(parentId=0)`,获取一级分类
+2. 查询的一级分类数据(比如5条记录), 进行初始化级联菜单的配置项(Option) `this.initOptions(categorys)`
 
+3. antd中测Cascader组件要配置options选项，数组, 由对象组成
+4. 显示二级列表
 
 
 

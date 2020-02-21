@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Menu, Icon } from 'antd'
-import { withRouter, Link, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import menuConfig from '../../config/menuConfig'
 
 const { SubMenu, Item } = Menu
@@ -8,7 +8,7 @@ const { SubMenu, Item } = Menu
 function LeftNav(props) {
 
   // let pathname = props.location.pathname
-  const { pathname } = useLocation()
+  let { pathname } = useLocation()
   let defaultOpenKeys = []
 
   const getMenuNodes = (menuList) => {
@@ -26,6 +26,7 @@ function LeftNav(props) {
         if (menu.children.find(cItem => pathname.indexOf(cItem.key) === 0)) {
           defaultOpenKeys.push(menu.key)
         }
+
         return (
           <SubMenu
             key={menu.key}
@@ -42,6 +43,11 @@ function LeftNav(props) {
       }
     })
   }
+  // /sales/product下级路由跳转时, Menu的selectedKeys依然是产品主路由,而不是下级路由,否则默认选中的效果就没有了
+  if (pathname.indexOf('/sales/product') === 0) {
+    pathname = '/sales/product'
+  }
+
   return (
     <Menu
       selectedKeys={[pathname]}
@@ -56,4 +62,4 @@ function LeftNav(props) {
   )
 }
 
-export default withRouter(LeftNav)
+export default LeftNav
