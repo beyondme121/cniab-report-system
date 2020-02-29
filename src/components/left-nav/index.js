@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Menu, Icon } from 'antd'
 import { Link, useLocation } from 'react-router-dom'
 import menuConfig from '../../config/menuConfig'

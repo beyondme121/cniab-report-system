@@ -23,10 +23,7 @@ class MenuForm extends Component {
 
   getIcons = async () => {
     const result = await reqIcons()
-    console.log("result: ---- ", result.data)
     if (result.status === 0) {
-      // let icons = result.data.map(item => <IconFont type={item.IconText} />)
-      // console.log("icons: ", icons)
       this.setState({
         iconList: result.data
       })
@@ -36,7 +33,6 @@ class MenuForm extends Component {
   UNSAFE_componentWillMount() {
     this.props.setForm(this.props.form)
   }
-  // 
 
   componentDidMount() {
     this.getIcons()
@@ -81,13 +77,12 @@ class MenuForm extends Component {
         <Item label="父级菜单">
           {
             getFieldDecorator("ParentMenuId", {
-              initialValue: '0000',
+              initialValue: '',
               rules: [
                 { required: true, message: '父级菜单必须选择' }
               ]
             })(
               <Select>
-                <Option key="0000" value="0000">一级菜单</Option>
                 {
                   menuList.map(item =>
                     <Option key={item.MenuId} value={item.MenuId}>{item.MenuNameCN} - {item.MenuPath}</Option>
