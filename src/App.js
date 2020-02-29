@@ -13,7 +13,6 @@ function App() {
   return (
     <Router>
       <Switch>
-        {/* <Route path="/test" component={Example} /> */}
         <Route path="/login" component={Login} />
         <Route path="/" component={Admin} />
       </Switch>

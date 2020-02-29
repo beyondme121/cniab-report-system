@@ -1,5 +1,17 @@
 import axios from 'axios'
 import { message } from 'antd'
+import store from '../redux/store'
+
+// 请求拦截器, 给请求添加token验证的Authorization
+axios.interceptors.request.use(config => {
+  let token = store.getState().user.token || localStorage.getItem('token') || ''
+  config.headers.common['Authorization'] = 'Bearer ' + token
+  return config
+})
+
+axios.interceptors.response.use(response => {
+  return response
+})
 
 export default function ajax(url, data = {}, method = 'GET') {
   return new Promise((resolve, reject) => {

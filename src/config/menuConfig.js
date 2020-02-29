@@ -68,6 +68,11 @@ export default [
         icon: 'control'
       },
       {
+        title: '菜单管理',
+        key: '/permission/menu',
+        icon: 'folder'
+      },
+      {
         title: '授权管理',
         key: '/permission/authrole',
         icon: 'contacts'

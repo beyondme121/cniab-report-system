@@ -12,12 +12,14 @@ import DashboardHome from '../dashboard/home'
 import Product from '../products/product'
 import Region from '../region/region'
 import RequestCategory from '../category/category'
+import Role from '../permission/role/role'
+import Menu from '../permission/menu/menu'
 
 const { Sider, Content, Footer } = Layout
 
 function Admin(props) {
-
-  if (props.user && !props.user.token) {
+  console.log("Admin props: ", props)
+  if (!props.user) {
     return <Redirect to='/login' />
   }
 
@@ -35,6 +37,8 @@ function Admin(props) {
               <Route path="/sales/product" component={Product} />
               <Route path="/sales/region" component={Region} />
               <Route path="/request/category" component={RequestCategory} />
+              <Route path="/permission/role" component={Role} />
+              <Route path="/permission/menu" component={Menu} />
             </Switch>
           </Content>
           <Footer style={{ textAlign: 'center', color: '#ccc', fontSize: '10px', padding: '5px 0' }}>

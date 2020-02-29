@@ -4,6 +4,8 @@ let BASE = '/api'
 // 请求接口函数, 业务层
 export const reqLogin = (username, password) => ajax(BASE + '/user/login', { username, password }, 'POST')
 
+export const reqLoginToken = (username, password) => ajax(BASE + '/login', { username, password }, 'POST')
+
 // ----------------- 商品分类 -----------------
 // 获取分类列表
 export const reqCategorys = (parentId) => ajax(BASE + '/category/getList', { parentId }, 'GET')
@@ -37,3 +39,15 @@ export const reqProductHierachyByPC = Profitcenter => ajax(BASE + '/product/getP
 
 // 5. 根据产品id更新产品状态
 export const reqUpdateProductStatus = (id, status) => ajax(BASE + '/product/update', { id, status }, 'POST')
+
+
+
+
+// 角色管理
+export const reqRoleList = () => ajax(BASE + '/role')
+export const reqAddRole = (role) => ajax(BASE + '/role', role, 'POST')
+
+// 菜单管理
+export const reqMenuList = () => ajax(BASE + '/permission/menu')
+export const reqAddMenu = (value) => ajax(BASE + '/permission/menu', value, 'POST')
+export const reqIcons = () => ajax(BASE + '/permission/menu/icons')

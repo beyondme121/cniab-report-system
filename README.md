@@ -186,35 +186,27 @@ body,
 
 ```
 
-
-
 ## 3. 商品管理模块
 
 ### 1. 添加商品
 
-点击添加按钮，路由跳转到一个新的界面(注意区分和新增类别不一样, 新增类别是弹出一个模态框)，为什么是路由一个新的界面，**因为需要添加的商品内容较多，modal放不下那么多内容**
+点击添加按钮，路由跳转到一个新的界面(注意区分和新增类别不一样, 新增类别是弹出一个模态框)，为什么是路由一个新的界面，**因为需要添加的商品内容较多，modal 放不下那么多内容**
 
 ### 2. 商品管理的路由设计
 
-在content区域首先包含了展示所有商品内容列表，列表中包含了“详情”，“修改商品”，以及“新增商品”，这些内容，都要在content区域进行展示，涉及到子路由的概念。
+在 content 区域首先包含了展示所有商品内容列表，列表中包含了“详情”，“修改商品”，以及“新增商品”，这些内容，都要在 content 区域进行展示，涉及到子路由的概念。
 
 商品管理功能中，有几个界面？界面之间有没有公用内容？怎么形成组件？组件的路由如何设计?
 
-1. 商品的主界面home
+1. 商品的主界面 home
 
+商品管理的首页 /product
 
+添加和吸怪商品 /product/addupdate
 
-商品管理的首页          /product
-
-添加和吸怪商品		  /product/addupdate
-
-详情							 /product/detail
-
-
+详情 /product/detail
 
 ### 3. 静态页面
-
-
 
 ### 4. 商品列表的后台分页
 
@@ -222,57 +214,57 @@ body,
 
 client: 需要传递请求的页码(第几页) 以及 一页请求的记录数
 
-server: 需要返回总的记录数total 以及 请求结果
+server: 需要返回总的记录数 total 以及 请求结果
 
 ```js
 // 实际请求的url类似: /api/product/listbypage?pageNum=2&pageSize=10
-const reqProducts = (pageNum, pageSize) => 
-	ajax(BASE + '/product/listbypage', {pageNum, pageSize}, 'GET')
+const reqProducts = (pageNum, pageSize) =>
+  ajax(BASE + "/product/listbypage", { pageNum, pageSize }, "GET");
 ```
-
-
-
-
 
 ### 5. 搜索分页
 
-Select进行按XXX查询，同时，可以分页，就是按照查询条件进行分页，点击分页码的查询条件不能丢掉！
+Select 进行按 XXX 查询，同时，可以分页，就是按照查询条件进行分页，点击分页码的查询条件不能丢掉！
 
 流程步骤
 
 1. 定义接口请求函数 api/index.js
 
 ```js
-export const reqSearchProducts = ({pageNum, pageSize, searchText, searchType}) => 
-	ajax(BASE + '/products/search', {
-    	pageNum,
-        pageSize,
-        [searchType]: searchText
-	})
+export const reqSearchProducts = ({
+  pageNum,
+  pageSize,
+  searchText,
+  searchType
+}) =>
+  ajax(BASE + "/products/search", {
+    pageNum,
+    pageSize,
+    [searchType]: searchText
+  });
 ```
-
-
-
-
 
 2. 一次性发送多个请求
 
 后端代码返回总数据量以及数据
 
 ```js
-const ctl_getSearchProductListByPage = async ({ pageNum, pageSize, ...rest }) => {
-  let text = ''
-  let arr = []
+const ctl_getSearchProductListByPage = async ({
+  pageNum,
+  pageSize,
+  ...rest
+}) => {
+  let text = "";
+  let arr = [];
   Object.keys(rest).forEach(key => {
-    arr.push(key + ` like '%${rest[key]}%'`)
-  })
-  text = arr.join(' and ')
+    arr.push(key + ` like '%${rest[key]}%'`);
+  });
+  text = arr.join(" and ");
 
   const results = await Promise.all([
     dao_getSearchProductsByPage(pageNum, pageSize, text),
     dao_getSearchProductTotalCount(text)
-  ])
-
+  ]);
 
   if (results[0].rowsAffected > 0 && results[1].rowsAffected > 0) {
     return {
@@ -281,7 +273,7 @@ const ctl_getSearchProductListByPage = async ({ pageNum, pageSize, ...rest }) =>
         list: results[0].recordset,
         total: results[1].recordset[0].total
       }
-    }
+    };
   } else {
     return {
       status: 1,
@@ -289,35 +281,32 @@ const ctl_getSearchProductListByPage = async ({ pageNum, pageSize, ...rest }) =>
         list: [],
         total: 0
       }
-    }
+    };
   }
-}
+};
 ```
 
-
-
-3. 进入明细页面, 根据产品ID，查询产品的一级或者二级分类名称
+3. 进入明细页面, 根据产品 ID，查询产品的一级或者二级分类名称
 
 设计状态, 请求接口，修改状态
 
 ### 6. 添加商品
 
-1. 路由设计已经在之前写好，在Home组件中的“添加商品”按钮中增加路由跳转的事件props.history.push(url)
-2. 静态页面   使用了什么antd组d
-
-
+1. 路由设计已经在之前写好，在 Home 组件中的“添加商品”按钮中增加路由跳转的事件 props.history.push(url)
+2. 静态页面 使用了什么 antd 组 d
 
 ### 7. 商品分类的级联菜单
 
 1. 容器组件(AddUpdateProduct)挂载后, 请求分类列表数据`getCategorys(parentId=0)`,获取一级分类
-2. 查询的一级分类数据(比如5条记录), 进行初始化级联菜单的配置项(Option) `this.initOptions(categorys)`
+2. 查询的一级分类数据(比如 5 条记录), 进行初始化级联菜单的配置项(Option) `this.initOptions(categorys)`
 
-3. antd中测Cascader组件要配置options选项，数组, 由对象组成
+3. antd 中测 Cascader 组件要配置 options 选项，数组, 由对象组成
 4. 显示二级列表
 
+### jwt
 
+> https://www.cnblogs.com/demodashi/p/9582502.html
 
+### 具有大量图片的网站
 
-
-
-
+- 要单独设计一个文件服务器
