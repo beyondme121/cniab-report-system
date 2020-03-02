@@ -361,3 +361,13 @@ makeTreeNode = menuList => {
   return data;
 };
 ```
+
+## 4. 角色授权
+
+- 给角色添加菜单
+  - 请求角色列表是, 角色携带菜单的信息数组 menus
+  - 选中某个角色,
+
+```
+npm view antd versions
+```

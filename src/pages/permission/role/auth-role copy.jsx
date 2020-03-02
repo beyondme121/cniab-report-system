@@ -1,32 +1,37 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Form, Input, Tree } from 'antd'
-import { reqMenuList } from '../../../api'
-
+import { connect } from 'react-redux'
+import { getMenuList } from '../../../redux/actions/menu-actions'
+// import setTreeData from '../../../utils/setTreeMenu'
 import setTreeMenuFilter from "../../../utils/setTreeMenuFilter";
 
 const { Item } = Form
 const { TreeNode } = Tree
 
-
+@connect(
+  state => ({
+    menuList: state.menu      //  菜单数组
+  }),
+  { getMenuList }
+)
 class AuthRole extends Component {
 
   static propTypes = {
     role: PropTypes.object,
+    getMenus: PropTypes.func.isRequired
   }
 
   constructor(props) {
     super(props)
     const { menu_ids } = this.props.role
     this.state = {
-      menuList: [],
-      checkedKeys: [...menu_ids] || []      // 角色的默认菜单列表从角色接口中获取,通过props传递给角色授权组件
+      checkedKeys: menu_ids || [],      // 角色的默认菜单列表从角色接口中获取,通过props传递给角色授权组件
     }
   }
 
-  getMenus = () => this.state.checkedKeys
-
   //将父子结构的数据 转换为 树状结构的数据
+
   getTreeNodes = (menuList) => {
     let treeData = setTreeMenuFilter(menuList, {
       id: 'MenuId',
@@ -52,52 +57,31 @@ class AuthRole extends Component {
 
   // 选中tree中的某个选项的回调, 将角色的菜单项收集到state
   onCheck = (checkedKeys) => {
+    this.props.getMenus(checkedKeys)
     this.setState({ checkedKeys })
-  }
-
-  getMenuList = async () => {
-    const result = await reqMenuList()
-    if (result.status === 0) {
-      this.getTreeNodes(result.data)
-      this.setState({
-        menuList: result.data
-      })
-    }
-  }
-
-  // 接收role对象, 因为role不同, menu也就不同, 但是初始的checkedKeys只执行一次,在constructor中设置的, 所以就会出现设置任何一个role都不再变动
-  // 这个生命周期就是 当接收到props发生变化的时候, 触发
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    const menus = nextProps.role.menu_ids
-    this.setState({
-      checkedKeys: menus
-    })
   }
 
   componentDidMount() {
     // 调用异步action 请求菜单menu数据
-    this.getMenuList()
+    this.props.getMenuList()
+    // 从redux中获取menu数据, 父子结构数据, 转换树状结构数据 并生成 TreeNode
+    this.getTreeNodes(this.props.menuList)
   }
 
   render() {
-    const { menuList, checkedKeys } = this.state
     const { role } = this.props
+    const { checkedKeys } = this.state
+
     const formItemLayout = {
       labelCol: { span: 6 },  // 左侧label的宽度
       wrapperCol: { span: 15 }, // 右侧包裹的宽度
     }
 
-    // if (menuList.length > 0) {
-    //   this.getTreeNodes(menuList)
-    // } else {
-    //   return null
-    // }
-
-    if (!this.menuList) return null
+    if (this.props.menuList) this.getTreeNodes(this.props.menuList)
 
     return (
-      <div>
-        <Item label="角色名称" {...formItemLayout}>
+      <Form {...formItemLayout}>
+        <Item label="角色名称" >
           <Input value={role.RoleName} disabled />
         </Item>
         <Tree
@@ -108,7 +92,7 @@ class AuthRole extends Component {
         >
           {this.menuList}
         </Tree>
-      </div>
+      </Form>
     )
   }
 }

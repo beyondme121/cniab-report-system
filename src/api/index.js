@@ -46,6 +46,7 @@ export const reqUpdateProductStatus = (id, status) => ajax(BASE + '/product/upda
 // 角色管理
 export const reqRoleList = () => ajax(BASE + '/role')
 export const reqAddRole = (role) => ajax(BASE + '/role', role, 'POST')
+export const reqUpdateRoleWithPermission = role => ajax(BASE + '/role/update', role, 'POST')
 
 // 菜单管理
 export const reqMenuList = () => ajax(BASE + '/permission/menu')
