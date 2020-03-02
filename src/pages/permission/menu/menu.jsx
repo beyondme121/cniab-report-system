@@ -14,8 +14,33 @@ export default class Menu extends Component {
     menuFormVisiable: false,
   }
 
+  initColumns = () => {
+    this.columns = [
+      {
+        title: '中文名',
+        dataIndex: 'MenuNameCN'
+      },
+      {
+        title: '权限描述',
+        dataIndex: 'MenuDescrition'
+      },
+      {
+        title: '菜单路径',
+        dataIndex: 'MenuPath'
+      },
+      {
+        title: '菜单状态',
+        dataIndex: 'Status',
+        render: Status => {
+          return Status === 1 ? '正常' : '作废'
+        }
+      },
+    ]
+  }
+
   getMenuList = async () => {
     const result = await reqMenuList()
+    console.log("menu: ", result.data)
     if (result.status === 0) {
       this.setState({
         menuList: result.data
@@ -46,7 +71,11 @@ export default class Menu extends Component {
     this.setState({
       menuFormVisiable: false,
     })
-    // this.form.resetFields()
+    this.form.resetFields()
+  }
+
+  UNSAFE_componentWillMount() {
+    this.initColumns()
   }
 
   componentDidMount() {

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
+
 import {
   Form, Input, Select
 } from 'antd'
@@ -20,7 +20,6 @@ class AddRole extends Component {
 
   getRoles = async () => {
     const result = await reqRoleList()
-    console.log("getRoles: ", result.data)
     if (result.status === 0) {
       this.setState({
         roles: result.data

@@ -310,3 +310,64 @@ const ctl_getSearchProductListByPage = async ({
 ### 具有大量图片的网站
 
 - 要单独设计一个文件服务器
+
+### 树形菜单
+
+- 参考了两篇文章
+
+1. https://blog.csdn.net/Mr_JavaScript/article/details/82817177 代码少,实现简单
+2. https://blog.csdn.net/liangrongliu1991/article/details/78344648 大量使用 for 代码多
+
+- 前提
+  1. 菜单必须有一个根几点, 设置根节点的 parent_id 为一个指定的值 如 0000
+
+```js
+function toTree(source, { id, parentId, children, rootId }) {
+  let cloneData = JSON.parse(JSON.stringify(source));
+  return cloneData.filter(father => {
+    let branchArr = cloneData.filter(child => father[id] == child[parentId]);
+    if (branchArr.length > 0) {
+      father[children] = branchArr;
+    }
+    return father[parentId] == rootId;
+  });
+}
+export default toTree;
+```
+
+- 在角色授权, 显示菜单树
+
+```js
+getTreeNodes = menuList => {
+  let treeData = setTreeMenuFilter(menuList, {
+    id: "MenuId",
+    parentId: "ParentMenuId",
+    children: "children",
+    rootId: "0000"
+  });
+  this.menuList = this.makeTreeNode(treeData);
+};
+
+// 根据整理后的菜单json数据, 带有children属性的数据 生成
+makeTreeNode = menuList => {
+  let data = menuList.reduce((pre, item) => {
+    pre.push(
+      <TreeNode title={item.MenuNameCN} key={item.MenuId}>
+        {item.children ? this.makeTreeNode(item.children) : null}
+      </TreeNode>
+    );
+    return pre;
+  }, []);
+  return data;
+};
+```
+
+## 4. 角色授权
+
+- 给角色添加菜单
+  - 请求角色列表是, 角色携带菜单的信息数组 menus
+  - 选中某个角色,
+
+```
+npm view antd versions
+```

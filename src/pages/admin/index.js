@@ -17,39 +17,41 @@ import Menu from '../permission/menu/menu'
 
 const { Sider, Content, Footer } = Layout
 
-function Admin(props) {
-  console.log("Admin props: ", props)
-  if (!props.user) {
-    return <Redirect to='/login' />
-  }
-
-  return (
-    <Layout style={{ height: '100%' }}>
-      <Header />
-      <Layout>
-        <Sider width={200} style={{ background: '#fff' }} >
-          <LeftNav />
-        </Sider>
+@connect(
+  state => ({ user: state.user }),
+  null
+)
+class Admin extends React.Component {
+  render() {
+    if (!this.props.user) {
+      return <Redirect to='/login' />
+    }
+    return (
+      <Layout style={{ height: '100%' }}>
+        <Header />
         <Layout>
-          <Content style={{ margin: 5, backgroundColor: 'white', width: '100%' }}>
-            <Switch>
-              <Route path="/dashboard/home" component={DashboardHome} />
-              <Route path="/sales/product" component={Product} />
-              <Route path="/sales/region" component={Region} />
-              <Route path="/request/category" component={RequestCategory} />
-              <Route path="/permission/role" component={Role} />
-              <Route path="/permission/menu" component={Menu} />
-            </Switch>
-          </Content>
-          <Footer style={{ textAlign: 'center', color: '#ccc', fontSize: '10px', padding: '5px 0' }}>
-            @2020 Beijing ABB Drive system ltd.
-          </Footer>
+          <Sider width={200} style={{ background: '#fff' }} >
+            <LeftNav />
+          </Sider>
+          <Layout>
+            <Content style={{ margin: 5, backgroundColor: 'white', width: '100%' }}>
+              <Switch>
+                <Route path="/dashboard/home" component={DashboardHome} />
+                <Route path="/sales/product" component={Product} />
+                <Route path="/sales/region" component={Region} />
+                <Route path="/request/category" component={RequestCategory} />
+                <Route path="/permission/role" component={Role} />
+                <Route path="/permission/menu" component={Menu} />
+              </Switch>
+            </Content>
+            <Footer style={{ textAlign: 'center', color: '#ccc', fontSize: '10px', padding: '5px 0' }}>
+              @2020 Beijing ABB Drive system ltd.
+            </Footer>
+          </Layout>
         </Layout>
       </Layout>
-    </Layout>
-  )
+    )
+  }
 }
 
-export default connect(state => ({
-  user: state.user
-}), null)(Admin)
+export default Admin
