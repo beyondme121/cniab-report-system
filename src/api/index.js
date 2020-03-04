@@ -58,4 +58,6 @@ export const reqAddUser = user => ajax(BASE + '/permission/user', user, 'POST')
 
 // 用户组管理
 export const reqUserGroupList = () => ajax(BASE + '/permission/group')
-export const reqUserGroupAdd = (group) => ajax(BASE + '/permission/group', group, 'POST')
+export const reqUserGroupAddOrUpdate =
+  group => ajax(BASE + '/permission/group', group, (group.group_id ? 'PUT' : 'POST'))
+export const reqUserGroupDelete = group => ajax(BASE + '/permission/group', group, 'DELETE')

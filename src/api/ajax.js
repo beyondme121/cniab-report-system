@@ -33,7 +33,13 @@ export default function ajax(url, data = {}, method = 'GET') {
     if (method === 'GET') {
       promise = axios.get(url, { params: data })
     } else {
-      promise = axios.post(url, data)
+      // promise = axios.post(url, data)
+      // promise = axios[method](url, data)
+      promise = axios({
+        url,
+        method,
+        data
+      })
     }
     // 异常处理
     promise

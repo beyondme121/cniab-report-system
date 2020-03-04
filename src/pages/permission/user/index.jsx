@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Switch, Route } from 'react-router-dom'
-import User from './user'
-import Group from './group'
+import User from './userinfo/user'
+import Group from './groupinfo/group'
 
 
 export default class UserIndex extends Component {

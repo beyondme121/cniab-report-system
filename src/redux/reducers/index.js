@@ -6,5 +6,5 @@ import group from './group-reducers'
 export default combineReducers({
   user,
   menu,
-  group
+  groupList: group
 })

@@ -8,14 +8,15 @@ const { Option } = Select
 
 @connect(
   state => ({
-    group: state.group
+    groupList: state.groupList
   })
 )
 @Form.create()
-class GroupAdd extends Component {
+class GroupAddOrUpdate extends Component {
 
   static propTypes = {
-    setForm: PropTypes.func.isRequired
+    setForm: PropTypes.func.isRequired,
+    group: PropTypes.object
   }
 
   UNSAFE_componentWillMount() {
@@ -23,6 +24,7 @@ class GroupAdd extends Component {
   }
 
   render() {
+    const { group } = this.props
     const formItemLayout = {
       labelCol: { span: 6 },  // 左侧label的宽度
       wrapperCol: { span: 15 }, // 右侧包裹的宽度
@@ -33,7 +35,7 @@ class GroupAdd extends Component {
         <Item label="用户组名">
           {
             getFieldDecorator("group_name", {
-              initialValue: '',
+              initialValue: group.group_name,
               rules: [
                 { required: true, message: '名称必须填写' }
               ]
@@ -45,7 +47,7 @@ class GroupAdd extends Component {
         <Item label="用户组描述">
           {
             getFieldDecorator("group_desc", {
-              initialValue: '',
+              initialValue: group.group_desc,
               rules: [
                 { required: true, message: '用户组描述必须填写' }
               ]
@@ -57,11 +59,11 @@ class GroupAdd extends Component {
         <Item label="父级组名称">
           {
             getFieldDecorator("parent_group_id", {
-              initilaValue: '',
+              initialValue: group.parent_group_id,
             })(
               <Select>
                 {
-                  this.props.group.map(item => (
+                  this.props.groupList.map(item => (
                     <Option key={item.group_id} value={item.group_id}>{item.group_name}</Option>
                   ))
                 }
@@ -73,4 +75,4 @@ class GroupAdd extends Component {
     )
   }
 }
-export default GroupAdd
+export default GroupAddOrUpdate

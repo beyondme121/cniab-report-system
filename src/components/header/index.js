@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { Layout, Menu } from 'antd'
+import { Layout, Menu, Badge, Avatar, Select } from 'antd'
 import logo from '../../assets/images/ABB_Logo.png'
 import './index.less'
 import menuConfig from '../../config/menuConfig'
@@ -13,6 +13,7 @@ import { logout } from '../../redux/actions/user-actions'
 
 const { Header } = Layout
 const { Item } = Menu
+const { Option } = Select
 
 function HeaderNav(menuList) {
   const { pathname } = useLocation()
@@ -60,7 +61,14 @@ function MyHeader(props) {
       </div>
       <div className="header-right">
         <div className="login-user">
-          {props.user.user_name}
+          {/* 
+            <Avatar shape="square" icon="user" />
+          </Badge> */}
+          <Badge count={3}>
+            <Avatar style={{ backgroundColor: '#f56a00', verticalAlign: 'middle' }} size="middle">
+              {props.user.user_name}
+            </Avatar>
+          </Badge>
         </div>
         <LinkButton onClick={handleLogout}>
           注销
