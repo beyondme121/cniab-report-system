@@ -1,10 +1,8 @@
 import ajax from "./ajax";
 
 let BASE = '/api'
-// 请求接口函数, 业务层
-export const reqLogin = (username, password) => ajax(BASE + '/user/login', { username, password }, 'POST')
 
-export const reqLoginToken = (username, password) => ajax(BASE + '/login', { username, password }, 'POST')
+// export const reqLoginToken = (username, password) => ajax(BASE + '/login', { username, password }, 'POST')
 
 // ----------------- 商品分类 -----------------
 // 获取分类列表
@@ -52,3 +50,12 @@ export const reqUpdateRoleWithPermission = role => ajax(BASE + '/role/update', r
 export const reqMenuList = () => ajax(BASE + '/permission/menu')
 export const reqAddMenu = (value) => ajax(BASE + '/permission/menu', value, 'POST')
 export const reqIcons = () => ajax(BASE + '/permission/menu/icons')
+
+// 用户管理
+export const reqLogin = (username, password) => ajax(BASE + '/user/login', { username, password }, 'POST')
+export const reqUserList = () => ajax(BASE + '/permission/user')
+export const reqAddUser = user => ajax(BASE + '/permission/user', user, 'POST')
+
+// 用户组管理
+export const reqUserGroupList = () => ajax(BASE + '/permission/group')
+export const reqUserGroupAdd = (group) => ajax(BASE + '/permission/group', group, 'POST')

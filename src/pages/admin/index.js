@@ -14,6 +14,7 @@ import Region from '../region/region'
 import RequestCategory from '../category/category'
 import Role from '../permission/role/role'
 import Menu from '../permission/menu/menu'
+import User from '../permission/user'
 
 const { Sider, Content, Footer } = Layout
 
@@ -23,7 +24,7 @@ const { Sider, Content, Footer } = Layout
 )
 class Admin extends React.Component {
   render() {
-    if (!this.props.user) {
+    if (!this.props.user.isLogin) {
       return <Redirect to='/login' />
     }
     return (
@@ -42,6 +43,7 @@ class Admin extends React.Component {
                 <Route path="/request/category" component={RequestCategory} />
                 <Route path="/permission/role" component={Role} />
                 <Route path="/permission/menu" component={Menu} />
+                <Route path="/permission/user" component={User} />
               </Switch>
             </Content>
             <Footer style={{ textAlign: 'center', color: '#ccc', fontSize: '10px', padding: '5px 0' }}>

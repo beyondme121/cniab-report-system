@@ -2,15 +2,13 @@ import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { Layout, Menu } from 'antd'
-
 import logo from '../../assets/images/ABB_Logo.png'
 import './index.less'
 import menuConfig from '../../config/menuConfig'
-
 import LinkButton from '../link-button'
 
 // action
-import { logout } from '../../redux/actions'
+import { logout } from '../../redux/actions/user-actions'
 
 
 const { Header } = Layout
@@ -42,6 +40,7 @@ function HeaderNav(menuList) {
   )
 }
 
+
 function MyHeader(props) {
 
   const handleLogout = () => {
@@ -61,7 +60,7 @@ function MyHeader(props) {
       </div>
       <div className="header-right">
         <div className="login-user">
-          张三
+          {props.user.user_name}
         </div>
         <LinkButton onClick={handleLogout}>
           注销
@@ -72,9 +71,9 @@ function MyHeader(props) {
   )
 }
 
-const mapStateToProps = state => ({})
-const mapDispatchToProps = dispatch => ({
-  logout: () => dispatch(logout())
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(MyHeader)
+export default connect(
+  state => ({
+    user: state.user.user
+  }),
+  { logout }
+)(MyHeader)

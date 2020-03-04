@@ -1,5 +1,5 @@
 import storeUtils from '../utils/storeUtils'
-import { reqLogin, reqLoginToken } from '../api'
+// import { reqLogin, reqLoginToken } from '../api'
 import { message } from 'antd'
 import {
   RECEIVE_USER,
@@ -28,41 +28,41 @@ export const logout = () => {
 
 
 // 异步action
-export const login = (username, password) => {
-  return async dispatch => {
-    const result = await reqLogin(username, password)
-    if (result.status === 0) {
-      message.success('登录成功!')
-      console.log('登录成功------')
-      const user = result.data
-      storeUtils.saveUser(user)
-      // 调用同步的保存user的action
-      dispatch(receive_user(user))
-    } else {
-      const msg = result.msg
-      dispatch(show_error_msg(msg))
-    }
-  }
-}
+// export const login = (username, password) => {
+//   return async dispatch => {
+//     const result = await reqLogin(username, password)
+//     if (result.status === 0) {
+//       message.success('登录成功!')
+//       console.log('登录成功------')
+//       const user = result.data
+//       storeUtils.saveUser(user)
+//       // 调用同步的保存user的action
+//       dispatch(receive_user(user))
+//     } else {
+//       const msg = result.msg
+//       dispatch(show_error_msg(msg))
+//     }
+//   }
+// }
 
 // 同步action, 保存用户信息
-const save_user = (value) => {
-  return {
-    type: SAVE_USER,
-    data: value
-  }
-}
+// const save_user = (value) => {
+//   return {
+//     type: SAVE_USER,
+//     data: value
+//   }
+// }
 
 
 // 异步action
-export const loginAsync = (username, password) => {
-  return async dispatch => {
-    let result = await reqLoginToken(username, password)
-    if (result.status === 0) {
-      localStorage.setItem('token', result.data)
-      dispatch(save_user(result.data))
-    } else {
-      message.error('失败')
-    }
-  }
-}
+// export const loginAsync = (username, password) => {
+//   return async dispatch => {
+//     let result = await reqLoginToken(username, password)
+//     if (result.status === 0) {
+//       localStorage.setItem('token', result.data)
+//       dispatch(save_user(result.data))
+//     } else {
+//       message.error('失败')
+//     }
+//   }
+// }

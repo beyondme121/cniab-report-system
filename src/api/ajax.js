@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { message } from 'antd'
 import store from '../redux/store'
+import { logout } from '../redux/actions/user-actions'
 
 // 请求拦截器, 给请求添加token验证的Authorization
 axios.interceptors.request.use(config => {
@@ -9,9 +10,21 @@ axios.interceptors.request.use(config => {
   return config
 })
 
-axios.interceptors.response.use(response => {
-  return response
-})
+axios.interceptors.response.use(
+  response => {
+    return response
+  },
+  error => {
+    if (error.response.status === 401) {
+      message.error(`Protected resource, Please login, ${error.message}`, 3)
+      store.dispatch(logout())
+      console.log('interceptors error')
+    } else {
+      message.error(`请求出错了: ${error.message}`, 5)
+    }
+    return new Promise(() => { })
+  }
+)
 
 export default function ajax(url, data = {}, method = 'GET') {
   return new Promise((resolve, reject) => {
@@ -28,7 +41,8 @@ export default function ajax(url, data = {}, method = 'GET') {
         resolve(res.data)
       })
       .catch(err => {
-        message.error("请求出错了: ", err.message)
+        console.log('catch error')
+        message.error(`请求出错了: ${err.message}`, 5)
       })
   })
 }

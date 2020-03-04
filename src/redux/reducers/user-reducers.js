@@ -1,20 +1,32 @@
-// import storeUtils from '../../utils/storeUtils'
-import { RECEIVE_USER, LOGOUT, SAVE_USER } from '../action-types'
+import { SAVE_USER, LOGOUT } from '../action-types'
 
-// const initUser = storeUtils.getUser()
-const initUser = localStorage.getItem('token') || ''
+let _user = JSON.parse(localStorage.getItem('user'))
+let _token = localStorage.getItem('token')
 
-function user(state = initUser, action) {
-  switch (action.type) {
-    case RECEIVE_USER:
-      return action.data
+let initUser = {
+  user: _user || {},
+  token: _token || '',
+  isLogin: _user && _token ? true : false
+}
+
+function userReducer(state = initUser, action) {
+  let { type, data } = action
+  switch (type) {
+    // 登录成功保存用户信息
     case SAVE_USER:
-      return action.data
+      return {
+        user: data.user,
+        token: data.token,
+        isLogin: true
+      }
     case LOGOUT:
-      return ''
+      return {
+        user: {},
+        token: ''
+      }
     default:
       return state
   }
 }
 
-export default user
+export default userReducer

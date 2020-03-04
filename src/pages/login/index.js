@@ -3,30 +3,14 @@ import { Form, Input, Button, Icon, message } from "antd";
 import './index.less'
 import logo from '../../assets/images/ABB_Logo.png'
 import { connect } from 'react-redux'
-import { loginAsync } from '../../redux/actions'
+import { loginAsync } from '../../redux/actions/user-actions'
 import { Redirect } from 'react-router-dom';
 
 const Item = Form.Item
 
-
 function Login(props) {
-
   const form = props.form
   const { getFieldDecorator } = form
-  // const token = props.user
-  // console.log("token: ", token)
-
-  // 表单提交
-  // const handleSubmit = (e) => {
-  //   e.preventDefault()
-  //   props.form.validateFields(async (err, values) => {
-  //     if (!err) {
-  //       const { username, password } = values
-  //       props.login(username, password)
-  //       message.success('登录成功')
-  //     }
-  //   })
-  // }
   const handleSubmit = e => {
     e.preventDefault()
     props.form.validateFields(async (err, values) => {
@@ -34,20 +18,15 @@ function Login(props) {
         let { username, password } = values
         // 验证登录并保存token到local中以及redux中
         await props.loginAsync(username, password)
-        // props.history.replace('/')
       } else {
         message.error('表单验证失败')
       }
     })
   }
 
-  if (props.user) {
-    console.log('login props.user ----', props.user)
-    // if (user && user.token) {
-    // return props.history.replace('/')
+  if (props.user.isLogin) {
     return <Redirect to='/' />
   } else {
-    console.log('========1111111111111111')
     return (
       <div className="login">
         <header className="login-header">
@@ -97,15 +76,17 @@ function Login(props) {
   }
 
 }
-// export default connect(
-//   state => ({ token: state.user }),
-//   { loginAsync }
-// )(Form.create()(Login))
+export default connect(
+  state => ({
+    user: state.user      // user包含了token,user对象以及isLogin
+  }),
+  { loginAsync }
+)(Form.create()(Login))
 
-const FormWrapper = Form.create()(Login)
+// const FormWrapper = Form.create()(Login)
 
-const mapStateToProps = state => ({
-  user: state.user
-})
-const mapDispatchToProps = { loginAsync }
-export default connect(mapStateToProps, mapDispatchToProps)(FormWrapper)
+// const mapStateToProps = state => ({
+//   user: state.user
+// })
+// const mapDispatchToProps = { loginAsync }
+// export default connect(mapStateToProps, mapDispatchToProps)(FormWrapper)
