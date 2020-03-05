@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { Card, Form, Input, Button, Icon } from 'antd'
-// import { } from '../../../api'
+import { Card, Form, Input, Button, Icon, Row, Col, message } from 'antd'
+import { reqAddUser, reqUserList } from '../../../../api'
 const { Item } = Form
 
 @Form.create()
@@ -10,6 +10,22 @@ class UserAddUpdate extends Component {
     users: []
   }
 
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.props.form.validateFields(async (err, values) => {
+      if (!err) {
+        const result = await reqAddUser(values)
+        console.log("result: ", result)
+        if (result.status === 0) {
+          message.success(result.msg)
+          // this.props.history.push('/permission/user/single')
+          this.props.history.goBack()
+          await reqUserList()
+        }
+      }
+    })
+  }
+
   componentDidMount() {
 
   }
@@ -17,9 +33,10 @@ class UserAddUpdate extends Component {
   render() {
     const { getFieldDecorator } = this.props.form
     const formItemLayout = {
-      labelCol: { span: 6 },  // 左侧label的宽度
-      wrapperCol: { span: 15 }, // 右侧包裹的宽度
+      labelCol: { span: 4 },  // 左侧label的宽度
+      wrapperCol: { span: 8 }, // 右侧包裹的宽度
     }
+
     const title = (
       <div>
         <Button type="link" onClick={() => this.props.history.goBack()}>
@@ -30,7 +47,7 @@ class UserAddUpdate extends Component {
     )
     return (
       <Card title={title}>
-        <Form {...formItemLayout} type="submit">
+        <Form onSubmit={this.handleSubmit} {...formItemLayout}>
           <Item label="用户名">
             {
               getFieldDecorator('user_name', {
@@ -67,6 +84,41 @@ class UserAddUpdate extends Component {
               )
             }
           </Item>
+          <Item label="AD账号">
+            {
+              getFieldDecorator('ad_account', {
+                initialValue: ''
+              })(
+                <Input placeholder="填写AD账号" />
+              )
+            }
+          </Item>
+          <Item label="电话">
+            {
+              getFieldDecorator('phone_no', {
+                initialValue: '',
+                // rules: [
+                //   { required: true, message: '必须填写用户名' }
+                // ]
+              })(
+                <Input placeholder="填写电话" />
+              )
+            }
+          </Item>
+          <Row>
+            <Col span={4} offset={6}>
+              <Item>
+                <Button>取消</Button>
+              </Item>
+            </Col>
+            <Col span={4} pull={2}>
+              <Item>
+                <Button type="primary" htmlType="submit">
+                  提交
+                </Button>
+              </Item>
+            </Col>
+          </Row>
         </Form>
       </Card>
     )

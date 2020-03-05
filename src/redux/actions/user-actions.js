@@ -1,6 +1,6 @@
 import { reqLogin } from "../../api"
 import { SAVE_USER, LOGOUT } from '../action-types'
-
+import { message } from 'antd'
 // 登录后保存用户信息
 const save_user = data => ({ type: SAVE_USER, data })
 
@@ -18,13 +18,17 @@ export const logout = () => {
 // 登录
 export const loginAsync = (username, password) => {
   return async dispatch => {
+    console.log("============")
     const { status, data } = await reqLogin(username, password)
+    console.log("data:", data)
     if (status === 0) {
       // 本地持久化, 页面一刷新, 状态数据就没了
       localStorage.setItem('user', JSON.stringify(data.user))
       localStorage.setItem('token', data.token)
       // 派发action redux保存一份
       dispatch(save_user(data))
+    } else {
+      message.warning('登录失败')
     }
   }
 }
