@@ -61,3 +61,4 @@ export const reqUserGroupList = () => ajax(BASE + '/permission/group')
 export const reqUserGroupAddOrUpdate =
   group => ajax(BASE + '/permission/group', group, (group.group_id ? 'PUT' : 'POST'))
 export const reqUserGroupDelete = group => ajax(BASE + '/permission/group', group, 'DELETE')
+export const reqAddUserIntoGroup = ({ group_id, user_ids }) => ajax(BASE + '/permission/group/adduser', { group_id, user_ids }, 'POST')

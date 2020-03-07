@@ -29,9 +29,10 @@ export default class User extends Component {
       {
         title: '注册日期',
         dataIndex: 'createtime',
-        render: createtime => {
-          return dayjs(createtime).format('YYYY-MM-DD HH:mm:ss')
-        }
+        // TODO 存入DB使用dayjs, 取出后时间点多了几个小时
+        // render: createtime => {
+        //   return dayjs(createtime).format('YYYY-MM-DD HH:mm')
+        // }
       },
       {
         title: '首次登录日期',
@@ -44,6 +45,17 @@ export default class User extends Component {
       {
         title: '登录次数',
         dataIndex: 'login_count'
+      },
+      {
+        title: '操作',
+        render: user => {
+          return (
+            <>
+              <Button type="link">编辑</Button>
+              <Button type="link">删除</Button>
+            </>
+          )
+        }
       }
     ]
   }
