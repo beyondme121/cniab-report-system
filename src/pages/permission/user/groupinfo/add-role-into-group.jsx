@@ -1,38 +1,38 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types'
 import { Transfer } from 'antd'
-import { reqUserList } from '../../../../api'
+import { reqRoleList } from '../../../../api'
 
-class AddUsersIntoGroup extends Component {
+class AddRoleIntoGroup extends Component {
 
   static propTypes = {
     group: PropTypes.object.isRequired
   }
 
   state = {
-    targetKeys: this.props.group.user_ids,
-    userList: []
+    targetKeys: this.props.group.role_ids,
+    roleList: []
   };
 
   handleChange = (nextTargetKeys) => {
     this.setState({ targetKeys: nextTargetKeys });
   };
 
-  getUserList = async () => {
-    const result = await reqUserList()
+  getRoleList = async () => {
+    const result = await reqRoleList()
     // 穿梭框规定的数据结构格式
     let dataSource = result.data.reduce((pre, item) => {
       pre.push({
-        key: item.user_id,
-        title: item.user_name,
-        description: item.email
+        key: item.RoleId,
+        title: item.RoleName,
+        description: item.RoleDesc
       })
       return pre
     }, [])
 
     if (result.status === 0) {
       this.setState({
-        userList: dataSource
+        roleList: dataSource
       })
     }
   }
@@ -52,20 +52,20 @@ class AddUsersIntoGroup extends Component {
   componentWillReceiveProps(nextProps) {
     const group = nextProps.group
     this.setState({
-      targetKeys: group.user_ids
+      targetKeys: group.role_ids
     })
   }
 
   componentDidMount() {
-    this.getUserList()
+    this.getRoleList()
   }
 
   render() {
-    const { targetKeys, userList } = this.state;
+    const { targetKeys, roleList } = this.state;
     return (
       <div>
         <Transfer
-          dataSource={userList}
+          dataSource={roleList}
           titles={['未选中', '已选中']}
           // 定义每个穿梭框的宽高
           listStyle={{
@@ -78,11 +78,11 @@ class AddUsersIntoGroup extends Component {
           style={{ marginLeft: 20 }}
           targetKeys={targetKeys}
           onChange={this.handleChange}
-          render={item => `${item.title} - ${item.description}`}
+          render={item => `${item.title}`}
         />
       </div>
     );
   }
 }
 
-export default AddUsersIntoGroup;
+export default AddRoleIntoGroup;

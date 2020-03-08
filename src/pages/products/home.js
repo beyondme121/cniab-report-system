@@ -203,6 +203,7 @@ export default function Home(props) {
       <Table
         bordered
         size={"small"}
+        scroll={{ y: 460 }}
         loading={loading}
         rowKey="_id"
         dataSource={products}

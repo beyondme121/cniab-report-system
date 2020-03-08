@@ -1,13 +1,16 @@
 import React, { Component } from 'react'
 import { Card, Button, Table, Modal, message } from 'antd'
+import LinkButton from '../../../../components/link-button'
 import GroupAddOrUpdate from './group-add-update'
 import AddUsersIntoGroup from './add-user-into-group'
+import AddRoleIntoGroup from './add-role-into-group'
 import { connect } from 'react-redux'
 import {
   reqUserGroupList,
   reqUserGroupAddOrUpdate,
   reqUserGroupDelete,
-  reqAddUserIntoGroup
+  reqAddUserIntoGroup,
+  reqAddRoleIntoGroup
 } from '../../../../api'
 import { save_groups } from '../../../../redux/actions/group-actions'
 import dayjs from 'dayjs'
@@ -30,54 +33,83 @@ class Group extends Component {
       showAddRoleIntoGroup: false       // 给用户组添加角色是否显示
     }
     this.refAddUsersIntoGroup = React.createRef()
+    this.refAddRoleIntoGroup = React.createRef()
   }
 
   initColums = () => {
     this.columns = [
       {
         title: '用户分组名',
-        dataIndex: 'group_name'
+        dataIndex: 'group_name',
+        fixed: 'left',
+        width: 200
       },
       {
         title: '分组描述',
-        dataIndex: 'group_desc'
+        dataIndex: 'group_desc',
+        width: 250
       },
       {
         title: '创建人',
-        dataIndex: 'create_user_name'
+        dataIndex: 'create_user_name',
+        align: 'center',
+        width: 100
       },
       {
         title: '更新人',
-        dataIndex: 'update_user_name'
+        dataIndex: 'update_user_name',
+        align: 'center',
+        width: 100
       },
       {
         title: '创建时间',
         dataIndex: 'create_time',
+        align: 'center',
+        width: 160,
         render: (create_time) => {
           return create_time ? dayjs(create_time).format('YYYY-MM-DD HH:mm') : ''
         }
       },
       {
         title: '用户数',
-
+        dataIndex: 'user_ids',
+        align: 'right',
+        // width: 100,
+        // onCell: (record, rowIndex) => {
+        //   console.log(record, rowIndex)
+        // },
+        render: (user_ids) => {
+          return user_ids.length
+        }
+      },
+      {
+        title: '角色数',
+        dataIndex: 'role_ids',
+        align: 'right',
+        // width: 100,
+        render: role_ids => {
+          return role_ids.length
+        }
       },
       {
         title: '操作',
+        fixed: 'right',
+        width: 300,
         render: (group) => (
           group.parent_group_id === '0' ? null :
             <div>
-              <Button type="link" onClick={() => this.showUpdate(group)}>编辑</Button>
-              <Button type="link" onClick={() => this.deleteGroup(group)}>删除</Button>
-              <Button type="link" onClick={
+              <LinkButton onClick={() => this.showUpdate(group)}>编辑</LinkButton>
+              <LinkButton onClick={() => this.deleteGroup(group)}>删除</LinkButton>
+              <LinkButton onClick={
                 () => {
                   this.group = group
                   this.setState({ showAddUsersIntoGroup: true })
                 }
-              }>添加用户</Button>
-              <Button type="link" onClick={() => {
+              }>添加用户</LinkButton>
+              <LinkButton onClick={() => {
                 this.group = group
                 this.setState({ showAddRoleIntoGroup: true })
-              }}>角色授权</Button>
+              }}>角色授权</LinkButton>
             </div>
         )
       }
@@ -137,23 +169,49 @@ class Group extends Component {
     }
   }
 
+  // 给用户组 添加 用户群
   handleAddUsersIntoGroup = async () => {
     // 获取所有选中的用户id
     let targetKeys = this.refAddUsersIntoGroup.current.getTargetKeys()
-    let group_id = this.group.group_id
-    const result = await reqAddUserIntoGroup({ group_id, user_ids: targetKeys })
-    if (result.status === 0) {
-      message.success('添加用户到用户组成功')
-      this.setState({
-        showAddUsersIntoGroup: false,
-      })
-      this.refAddUsersIntoGroup.current.setTargetKeys()
+    if (targetKeys.length === 0) {
+      message.warning('必须选择用户列表')
+      return
+    } else {
+      let group_id = this.group.group_id
+      const result = await reqAddUserIntoGroup({ group_id, user_ids: targetKeys })
+      if (result.status === 0) {
+        message.success(result.msg)
+        this.setState({
+          showAddUsersIntoGroup: false,
+        })
+        this.refAddUsersIntoGroup.current.setTargetKeys()
+        this.getGroupList()
+      } else {
+        message.success(result.msg)
+      }
     }
   }
 
   // 给用户组添加角色
-  handleAddRoleIntoGroup = () => {
-
+  handleAddRoleIntoGroup = async () => {
+    let targetKeys = this.refAddRoleIntoGroup.current.getTargetKeys()
+    if (targetKeys.length === 0) {
+      message.warning('必须选择角色列表')
+      return
+    } else {
+      let group_id = this.group.group_id
+      const result = await reqAddRoleIntoGroup({ group_id, role_ids: targetKeys })
+      if (result.status === 0) {
+        message.success(result.msg)
+        this.setState({
+          showAddRoleIntoGroup: false,
+        })
+        this.refAddRoleIntoGroup.current.setTargetKeys()
+        this.getGroupList()
+      } else {
+        message.success(result.msg)
+      }
+    }
   }
 
   UNSAFE_componentWillMount() {
@@ -173,6 +231,7 @@ class Group extends Component {
         <Table
           bordered
           size={"small"}
+          scroll={{ x: 1200 }}
           rowKey="group_id"
           dataSource={groups}
           columns={this.columns}
@@ -216,8 +275,13 @@ class Group extends Component {
             this.group = null
             this.setState({ showAddRoleIntoGroup: false })
           }}
+          style={{
+            top: 50,
+            minWidth: 800,
+          }}
+          bodyStyle={{ minHeight: 500 }}  // Modal body 样式
         >
-          hello
+          <AddRoleIntoGroup ref={this.refAddRoleIntoGroup} group={group} />
         </Modal>
       </Card>
     )

@@ -87,6 +87,7 @@ export default class User extends Component {
       <Card title={title}>
         <Table
           bordered
+          size="small"
           rowKey="user_id"
           dataSource={users}
           columns={this.columns}
