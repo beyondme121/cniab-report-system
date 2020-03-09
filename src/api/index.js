@@ -55,12 +55,11 @@ export const reqIcons = () => ajax(BASE + '/permission/menu/icons')
 export const reqLogin = (username, password) => ajax(BASE + '/user/login', { username, password }, 'POST')
 export const reqUserList = () => ajax(BASE + '/permission/user')
 export const reqAddUser = user => ajax(BASE + '/permission/user', user, 'POST')
+export const reqDeleteUsers = users => ajax(BASE + '/permission/users', users, 'DELETE')
 
 // 用户组管理
 export const reqUserGroupList = () => ajax(BASE + '/permission/group')
-export const reqUserGroupAddOrUpdate =
-  group => ajax(BASE + '/permission/group', group, (group.group_id ? 'PUT' : 'POST'))
+export const reqUserGroupAddOrUpdate = group => ajax(BASE + '/permission/group', group, (group.group_id ? 'PUT' : 'POST'))
 export const reqUserGroupDelete = group => ajax(BASE + '/permission/group', group, 'DELETE')
 export const reqAddUserIntoGroup = ({ group_id, user_ids }) => ajax(BASE + '/permission/group/adduser', { group_id, user_ids }, 'POST')
-// 给用户组授权角色
 export const reqAddRoleIntoGroup = ({ group_id, role_ids }) => ajax(BASE + '/permission/group/addrole', { group_id, role_ids }, 'POST')

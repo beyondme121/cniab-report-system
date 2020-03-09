@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import UserHome from './user-home'
 import UserAddUpdate from './user-add-update'

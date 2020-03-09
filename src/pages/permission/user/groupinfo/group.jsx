@@ -47,7 +47,8 @@ class Group extends Component {
       {
         title: '分组描述',
         dataIndex: 'group_desc',
-        width: 250
+        ellipsis: true,
+        width: 200
       },
       {
         title: '创建人',

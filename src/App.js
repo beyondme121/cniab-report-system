@@ -8,6 +8,7 @@ import {
 import Login from './pages/login'
 import Admin from './pages/admin'
 // import Example from './test/test-lifecycle'
+// import TableTest from './test/test-table-search'
 
 class App extends React.Component {
   render() {
@@ -15,6 +16,7 @@ class App extends React.Component {
       <Router>
         <Switch>
           <Route path="/login" component={Login} />
+          {/* <Route path="/table" component={TableTest} /> */}
           <Route path="/" component={Admin} />
         </Switch>
       </Router>
