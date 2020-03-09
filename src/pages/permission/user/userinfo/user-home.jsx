@@ -158,6 +158,7 @@ export default class UserHome extends Component {
         title: '用户名',
         dataIndex: 'user_name',
         key: 'user_name',
+        // className: 'hello',
         ...this.getColumnSearchProps('user_name')
       },
       {
