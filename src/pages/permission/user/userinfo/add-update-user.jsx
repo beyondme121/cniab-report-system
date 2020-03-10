@@ -7,7 +7,7 @@ const { Item } = Form
 const { TreeNode } = TreeSelect
 
 @Form.create()
-class UserAddUpdate extends Component {
+class AddUpdateUser extends Component {
 
   state = {
     users: [],
@@ -196,4 +196,4 @@ class UserAddUpdate extends Component {
     )
   }
 }
-export default UserAddUpdate
+export default AddUpdateUser

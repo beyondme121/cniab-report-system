@@ -1,19 +1,27 @@
 import React, { Component } from 'react'
 import { Card, Button, Table, Modal, Row, Col, Input, Icon, message } from 'antd'
 import Highlighter from 'react-highlight-words';
+import AddRoleIntoUser from './add-role-into-user'
 import {
   reqUserList,
   reqDeleteUsers,
+  reqAddRoleIntoUser
 } from '../../../../api'
 import dayjs from 'dayjs'
 import { PAGE_SIZE } from '../../../../config/constants'
 
 export default class UserHome extends Component {
-  state = {
-    users: [],
-    selectedRowKeys: [],
-    searchText: '',
-    searchedColumn: '',
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      users: [],                  // 用户列表
+      selectedRowKeys: [],        // 选中的1或n个用户id
+      searchText: '',             // table列筛选时键入的搜索文本
+      searchedColumn: '',         // 作为筛选的表字段
+      showAddUsersRoles: false    // 给用户授予角色的Modal是否显示
+    }
+    this.refAddRoleIntoUser = React.createRef()
   }
 
   // ------------------- 处理表单字段查询的回调 start-------------------
@@ -145,14 +153,36 @@ export default class UserHome extends Component {
     }
   }
 
+  // 3. 给用户或用户组授权角色(批量给用户群授予1或多个角色)
+  showAddUsersRolesModal = () => {
+    this.user_id = this.state.selectedRowKeys[0]        // 把唯一选择的用户保存在实例上
+    this.setState({
+      showAddUsersRoles: true
+    })
+  }
+
+  handleUserRoleOkCallback = async () => {
+    const role_ids = this.refAddRoleIntoUser.current.getTargetKeys()
+    const user_id = this.state.selectedRowKeys[0]
+    const result = await reqAddRoleIntoUser({ user_id, role_ids })
+    if (result.status === 0) {
+      this.refAddRoleIntoUser.current.setTargetKeys()
+      message.success(result.msg)
+      this.setState({
+        showAddUsersRoles: false
+      })
+    } else {
+      message.error(result.msg)
+    }
+  }
 
   componentDidMount() {
     this.getUserList()
   }
 
   render() {
-    const { users, selectedRowKeys } = this.state
-
+    const { users, selectedRowKeys, showAddUsersRoles } = this.state
+    const user_id = this.user_id || ''
     const columns = [
       {
         title: '用户名',
@@ -215,7 +245,7 @@ export default class UserHome extends Component {
           </Button>
         </Col>
         <Col span={2}>
-          <Button type="primary" disabled={true} onClick={
+          <Button type="primary" disabled={selectedRowKeys.length == 1 ? false : true} onClick={
             () => this.props.history.push('/permission/user/single/addupdate')}>
             修改用户
           </Button>
@@ -226,13 +256,11 @@ export default class UserHome extends Component {
           </Button>
         </Col>
         <Col span={2}>
-          <Button type="primary" {...btnStyle} onClick={() => { }}>
+          <Button
+            type="primary"
+            disabled={selectedRowKeys.length == 1 ? false : true}
+            onClick={this.showAddUsersRolesModal}>
             设置角色
-          </Button>
-        </Col>
-        <Col span={2}>
-          <Button type="primary" {...btnStyle} onClick={() => { }}>
-            设置用户组
           </Button>
         </Col>
       </Row>
@@ -250,6 +278,25 @@ export default class UserHome extends Component {
           columns={columns}
           pagination={{ defaultPageSize: PAGE_SIZE, showQuickJumper: true }}
         />
+        <Modal
+          title="用户授权角色"
+          visible={showAddUsersRoles}
+          onOk={this.handleUserRoleOkCallback}
+          onCancel={() => {
+            this.user_id = ''
+            this.setState({
+              showAddUsersRoles: false
+            })
+            this.refAddRoleIntoUser.current.setTargetKeys()
+          }}
+          style={{
+            top: 50,
+            minWidth: 800,
+          }}
+        >
+          {/* 传递user_id是用于查询该用户的角色, 用于初始化显示用户的角色 */}
+          <AddRoleIntoUser ref={this.refAddRoleIntoUser} user_id={user_id} />
+        </Modal>
       </Card>
     )
   }

@@ -45,6 +45,7 @@ export const reqUpdateProductStatus = (id, status) => ajax(BASE + '/product/upda
 export const reqRoleList = () => ajax(BASE + '/role')
 export const reqAddRole = (role) => ajax(BASE + '/role', role, 'POST')
 export const reqUpdateRoleWithPermission = role => ajax(BASE + '/role/update', role, 'POST')
+export const reqGetRoleByUserId = user_id => ajax(BASE + '/role/getByUserId', { user_id })      // 根据用户id查询用户的角色
 
 // 菜单管理
 export const reqMenuList = () => ajax(BASE + '/permission/menu')
@@ -56,6 +57,7 @@ export const reqLogin = (username, password) => ajax(BASE + '/user/login', { use
 export const reqUserList = () => ajax(BASE + '/permission/user')
 export const reqAddUser = user => ajax(BASE + '/permission/user', user, 'POST')
 export const reqDeleteUsers = users => ajax(BASE + '/permission/users', users, 'DELETE')
+export const reqAddRoleIntoUser = userWithRoles => ajax(BASE + '/permission/user/addrole', userWithRoles, 'POST')
 
 // 用户组管理
 export const reqUserGroupList = () => ajax(BASE + '/permission/group')
