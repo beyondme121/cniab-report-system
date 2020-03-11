@@ -98,7 +98,6 @@ export default class UserHome extends Component {
   // ------------------- 选中某一行或某几行记录的回调(用户收集选中项的user_id) start -------------------
   // 点击复选框的回调
   onSelectChange = (selectedRowKeys) => {
-    console.log("selectedRowKeys, ", selectedRowKeys)
     this.setState({ selectedRowKeys })
   }
   // 点击记录行的回调
@@ -204,7 +203,11 @@ export default class UserHome extends Component {
       {
         title: '电话',
         dataIndex: 'phone_no',
-        ...this.getColumnSearchProps('phone_no')
+        ...this.getColumnSearchProps('phone_no'),
+        render: phone_no =>
+          <div style={{ textAlign: 'right' }}>
+            {'￥' + phone_no.replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1,")}
+          </div>
       },
       {
         title: '注册日期',
@@ -246,7 +249,7 @@ export default class UserHome extends Component {
         </Col>
         <Col span={2}>
           <Button type="primary" disabled={selectedRowKeys.length == 1 ? false : true} onClick={
-            () => this.props.history.push('/permission/user/single/addupdate')}>
+            () => this.props.history.push('/permission/user/single/addupdate', { user_id: selectedRowKeys[0] })}>
             修改用户
           </Button>
         </Col>
@@ -283,11 +286,11 @@ export default class UserHome extends Component {
           visible={showAddUsersRoles}
           onOk={this.handleUserRoleOkCallback}
           onCancel={() => {
-            this.user_id = ''
+            // this.user_id = ''
             this.setState({
               showAddUsersRoles: false
             })
-            this.refAddRoleIntoUser.current.setTargetKeys()
+            // this.refAddRoleIntoUser.current.setTargetKeys()
           }}
           style={{
             top: 50,

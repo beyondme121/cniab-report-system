@@ -55,9 +55,10 @@ export const reqIcons = () => ajax(BASE + '/permission/menu/icons')
 // 用户管理
 export const reqLogin = (username, password) => ajax(BASE + '/user/login', { username, password }, 'POST')
 export const reqUserList = () => ajax(BASE + '/permission/user')
-export const reqAddUser = user => ajax(BASE + '/permission/user', user, 'POST')
+export const reqAddOrUpdateUser = user => ajax(BASE + '/permission/user', user, (user.user_id ? 'PUT' : 'POST'))
 export const reqDeleteUsers = users => ajax(BASE + '/permission/users', users, 'DELETE')
 export const reqAddRoleIntoUser = userWithRoles => ajax(BASE + '/permission/user/addrole', userWithRoles, 'POST')
+export const reqUserByUserId = user_id => ajax(BASE + '/permission/user/byId', { user_id }, 'GET')
 
 // 用户组管理
 export const reqUserGroupList = () => ajax(BASE + '/permission/group')

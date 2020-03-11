@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import PropTypes from 'prop-types'
 import { Transfer } from 'antd'
-import { reqRoleList, reqGetRoleByUserId, reqAddRoleIntoUser } from '../../../../api'
+import { reqRoleList, reqGetRoleByUserId } from '../../../../api'
 
-class AddRoleIntoUser extends Component {
+class AddRoleIntoUser extends PureComponent {
 
   static propTypes = {
     user_id: PropTypes.string.isRequired
@@ -58,9 +58,20 @@ class AddRoleIntoUser extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    const user_id = nextProps.user_id
-    this.getRoleListByUserId(user_id)
+  // componentWillReceiveProps(nextProps) {
+  //   const user_id = nextProps.user_id
+  //   this.getRoleListByUserId(user_id)
+  // }
+
+  // 测试替换componentWillReceiveProps
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    console.log("this.props.user_id: ", this.props.user_id)
+    console.log("prevProps.user_id: ", prevProps.user_id)
+    if (this.props.user_id !== prevProps.user_id) {
+      console.log("componentDidUpdate")
+      const user_id = this.props.user_id
+      this.getRoleListByUserId(user_id)
+    }
   }
 
   componentDidMount() {

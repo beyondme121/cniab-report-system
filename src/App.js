@@ -10,18 +10,29 @@ import Admin from './pages/admin'
 // import Example from './test/test-lifecycle'
 // import TableTest from './test/test-table-search'
 
-class App extends React.Component {
-  render() {
-    return (
-      <Router>
-        <Switch>
-          <Route path="/login" component={Login} />
-          {/* <Route path="/table" component={TableTest} /> */}
-          <Route path="/" component={Admin} />
-        </Switch>
-      </Router>
-    )
-  }
+function App() {
+  return (
+    <Router>
+      <Switch>
+        <Route path="/login" component={Login} />
+        <Route path="/" component={Admin} />
+      </Switch>
+    </Router>
+  )
 }
+
+// class App extends React.Component {
+//   render() {
+//     return (
+//       <Router>
+//         <Switch>
+//           <Route path="/login" component={Login} />
+//           {/* <Route path="/table" component={TableTest} /> */}
+//           <Route path="/" component={Admin} />
+//         </Switch>
+//       </Router>
+//     )
+//   }
+// }
 
 export default App
