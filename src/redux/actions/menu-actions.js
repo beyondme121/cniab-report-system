@@ -11,7 +11,6 @@ export const save_menu = (menus) => ({
 export const getMenuList = () => {
   return async dispatch => {
     const result = await reqMenuList()
-    console.log("menu result: ", result.data)
     if (result.status === 0) {
       dispatch(save_menu(result.data))
     } else {

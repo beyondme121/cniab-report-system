@@ -44,6 +44,7 @@ class Admin extends React.Component {
                 <Route path="/permission/role" component={Role} />
                 <Route path="/permission/menu" component={Menu} />
                 <Route path="/permission/user" component={User} />
+                <Redirect to="/dashboard/home" />
               </Switch>
             </Content>
             <Footer style={{ textAlign: 'center', color: '#ccc', fontSize: '10px', padding: '5px 0' }}>

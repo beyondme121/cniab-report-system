@@ -2,15 +2,22 @@ import React, { Component } from 'react'
 import { Card, Table, Button, Modal, message, Icon } from 'antd'
 import MenuForm from './menu-form'
 import { PAGE_SIZE } from '../../../config/constants'
-import { reqAddMenu, reqMenuList } from '../../../api'
+import { reqAddOrUpdateMenu } from '../../../api'
+import { connect } from 'react-redux'
+import { getMenuList } from '../../../redux/actions/menu-actions'
 
 const IconFont = Icon.createFromIconfontCN({
   scriptUrl: '//at.alicdn.com/t/font_1663377_xnpc7c8ju7.js',
 });
 
-export default class Menu extends Component {
+@connect(
+  state => ({
+    menuList: state.menu      //  菜单数组
+  }),
+  { getMenuList }
+)
+class Menu extends Component {
   state = {
-    menuList: [],
     menuFormVisiable: false,
   }
 
@@ -21,7 +28,7 @@ export default class Menu extends Component {
         dataIndex: 'MenuNameCN'
       },
       {
-        title: '权限描述',
+        title: '资源描述',
         dataIndex: 'MenuDescrition'
       },
       {
@@ -29,37 +36,49 @@ export default class Menu extends Component {
         dataIndex: 'MenuPath'
       },
       {
-        title: '菜单状态',
-        dataIndex: 'Status',
-        render: Status => {
-          return Status === 1 ? '正常' : '作废'
-        }
+        title: '排序',
+        width: '4%',
+        dataIndex: 'SortKey',
+        render: sortkey => (
+          <div style={{ textAlign: "right" }}>{sortkey}</div>
+        )
       },
+      {
+        title: '资源类型',
+        dataIndex: 'type'
+      },
+      {
+        title: '权限类型',
+        dataIndex: 'auth_type'
+      },
+      {
+        title: '操作',
+        width: '12%',
+        render: (item) => (
+          item.ParentMenuId === '0000' ? null :
+            <>
+              <Button type="link" onClick={() => this.showMenuForm(item)}>编辑</Button>
+              <Button type="link">删除</Button>
+            </>
+        )
+      }
     ]
   }
 
-  getMenuList = async () => {
-    const result = await reqMenuList()
-    console.log("menu: ", result.data)
-    if (result.status === 0) {
-      this.setState({
-        menuList: result.data
-      })
-    }
-  }
-
+  // 点击确定(新增或修改)
   handleMenuOk = () => {
     this.form.validateFields(async (err, values) => {
       if (!err) {
-        // 收集数据 后端接口要严格判断角色的唯一性
-        const result = await reqAddMenu(values)
+        values.menu_id = this.menu && this.menu.MenuId
+        // TODO 接口处理新增或更新菜单的唯一性(菜单名称+路径)
+        const result = await reqAddOrUpdateMenu(values)
         if (result.status === 0) {
           message.success(result.msg, 1)
           this.form.resetFields()
           this.setState({
             menuFormVisiable: false
           })
-          this.getMenuList()
+          this.props.getMenuList()
         } else {
           message.warning(result.msg, 2)
         }
@@ -74,26 +93,36 @@ export default class Menu extends Component {
     this.form.resetFields()
   }
 
+  // 编辑的回调
+  showMenuForm = (menu) => {
+    this.menu = menu
+    this.setState({
+      menuFormVisiable: true
+    })
+  }
+
   UNSAFE_componentWillMount() {
     this.initColumns()
   }
 
-  componentDidMount() {
-    this.getMenuList()
-  }
-
   render() {
-    const { menuList, menuFormVisiable } = this.state
+    const { menuFormVisiable } = this.state
+    const menuList = this.props.menuList || {}
+    const menu = this.menu || {}
     const title = (
-      <Button type="primary" onClick={() => this.setState({ menuFormVisiable: true })}>
+      <Button type="primary" onClick={() => {
+        this.menu = null
+        this.setState({ menuFormVisiable: true })
+      }}>
         添加菜单
-        <IconFont type="icon-xingye" />
+        <IconFont type="icon-xuqiutianbao" />
       </Button>
     )
     return (
       <Card title={title}>
         <Table
           bordered
+          size={"small"}
           rowKey="MenuId"
           dataSource={menuList}
           columns={this.columns}
@@ -101,13 +130,25 @@ export default class Menu extends Component {
         />
         <Modal
           title="添加菜单"
+          bordered={false}
           visible={menuFormVisiable}
           onOk={this.handleMenuOk}
           onCancel={this.handleMenuCancel}
+          style={{
+            top: 20,
+            minWidth: 600,
+          }}
+          bodyStyle={{ padding: '8px 0 0 0' }}
         >
-          <MenuForm setForm={form => this.form = form} menuList={menuList} />
+          <MenuForm
+            setForm={form => this.form = form}
+            menuList={menuList}
+            menu={menu}
+          />
         </Modal>
       </Card>
     )
   }
 }
+
+export default Menu

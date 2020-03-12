@@ -49,7 +49,7 @@ export const reqGetRoleByUserId = user_id => ajax(BASE + '/role/getByUserId', { 
 
 // 菜单管理
 export const reqMenuList = () => ajax(BASE + '/permission/menu')
-export const reqAddMenu = (value) => ajax(BASE + '/permission/menu', value, 'POST')
+export const reqAddOrUpdateMenu = value => ajax(BASE + '/permission/menu', value, (value.menu_id ? 'PUT' : 'POST'))
 export const reqIcons = () => ajax(BASE + '/permission/menu/icons')
 
 // 用户管理
