@@ -1,14 +1,11 @@
 import React, { Component } from 'react'
-
-import {
-  Form, Input, Select
-} from 'antd'
-
+import { Form, Input, Select } from 'antd'
 import { reqRoleList } from '../../../api'
 
 const { Item } = Form
 const { Option } = Select
 
+@Form.create()
 class AddRole extends Component {
   state = {
     roles: []
@@ -34,6 +31,7 @@ class AddRole extends Component {
   componentDidMount() {
     this.getRoles()
   }
+
   render() {
     const { getFieldDecorator } = this.props.form
     const formItemLayout = {
@@ -89,4 +87,4 @@ class AddRole extends Component {
     )
   }
 }
-export default Form.create()(AddRole)
+export default AddRole

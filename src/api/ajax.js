@@ -16,11 +16,10 @@ axios.interceptors.response.use(
   },
   error => {
     if (error.response.status === 401) {
-      message.error(`Protected resource, Please login, ${error.message}`, 3)
+      message.error(`Protected resource, Please login, ${error.message}`, 1)
       store.dispatch(logout())
-      console.log('interceptors error')
     } else {
-      message.error(`请求出错了: ${error.message}`, 5)
+      message.error(`请求出错了: ${error.message}`, 3)
     }
     return new Promise(() => { })
   }
@@ -33,8 +32,6 @@ export default function ajax(url, data = {}, method = 'GET') {
     if (method === 'GET') {
       promise = axios.get(url, { params: data })
     } else {
-      // promise = axios.post(url, data)
-      // promise = axios[method](url, data)
       promise = axios({
         url,
         method,
@@ -47,7 +44,6 @@ export default function ajax(url, data = {}, method = 'GET') {
         resolve(res.data)
       })
       .catch(err => {
-        console.log('catch error')
         message.error(`请求出错了: ${err.message}`, 5)
       })
   })

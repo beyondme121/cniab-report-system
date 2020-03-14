@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Card, Button, Table, Modal, message } from 'antd'
 import dayjs from 'dayjs'
-import { reqRoleList, reqAddRole, reqUpdateRoleWithPermission } from '../../../api'
+import { reqRoleList, reqAddRole, reqAuthRoleMenu } from '../../../api'
 import { PAGE_SIZE } from '../../../config/constants'
 import AddRole from './add-role'
 import AuthRole from './auth-role'
@@ -14,14 +14,22 @@ export default class Role extends Component {
       roles: [],              // 角色列表
       role: {},               // 选中的角色
       isShowAdd: false,
-      isShowAuth: false,
-      roleMenus: []           // 选中角色对应的菜单
+      isShowAuth: false
     }
     this.auth = React.createRef()
   }
 
   initColumns = () => {
+    // TODO 需要在每次点击菜单时自动保存, bug
+    let count = 1
     this.columns = [
+      // {
+      //   title: '序号',
+      //   width: '5%',
+      //   render: () => {
+      //     return <div style={{ textAlign: 'center' }}>{count++}</div>
+      //   }
+      // },
       {
         title: '角色名称',
         dataIndex: 'RoleName'
@@ -34,39 +42,40 @@ export default class Role extends Component {
         title: '创建时间',
         dataIndex: 'CreateTime',
         render: (CreateTime) => {
-          return CreateTime
-          // return CreateTime = !CreateTime ? null : dayjs(CreateTime).format('YYYY-MM-DD HH:mm:ss')
+          return dayjs(CreateTime).format('YYYY-MM-DD HH:mm')
         }
       },
       {
         title: '创建人',
-        dataIndex: 'CreateUserId'
+        dataIndex: 'user_name'
       },
       {
         title: '授权时间',
         dataIndex: 'AuthTime',
-        // render: (AuthTime) => {
-        //   return dayjs(AuthTime).format('YYYY-MM-DD HH:mm:ss')
-        // }
+        render: (AuthTime) => {
+          return dayjs(AuthTime).format('YYYY-MM-DD HH:mm')
+        }
       },
       {
         title: '授权人',
-        dataIndex: 'AuthUserId'
+        dataIndex: 'AuthUserName'
       }
     ]
   }
 
-  // 获取用户角色列表
+  // 1. 获取用户角色列表 以及角色对应的菜单 (一个角色对应多个菜单)
   getRoles = async () => {
     let result = await reqRoleList()
     if (result.status === 0) {
       this.setState({
         roles: result.data
       })
+    } else {
+      message.warning(`${result.msg}`)
     }
   }
 
-  // 增加角色
+  // 2. 新增角色
   addRole = () => {
     this.form.validateFields(async (err, values) => {
       if (!err) {
@@ -78,11 +87,12 @@ export default class Role extends Component {
           this.setState({
             isShowAdd: false
           })
-          this.setState(state => {
-            return {
-              roles: [...state.roles, result.data]
-            }
-          })
+          this.getRoles()
+          // this.setState(state => {
+          //   return {
+          //     roles: [...state.roles, result.data]
+          //   }
+          // })
         } else {
           message.warning(result.msg, 2)
         }
@@ -90,37 +100,28 @@ export default class Role extends Component {
     })
   }
 
-  // 传递给AuthRole组件的回调函数, 将授权组件的数据传递给父组件
-  getMenus = (menus) => {
-    console.log("menus: ", menus)
-    this.setState({
-      roleMenus: menus
-    })
-  }
-
-  // 给角色授权, 添加角色的菜单
+  // 3. 给角色授权, 添加角色的菜单
   updateRoleMenus = async () => {
-    const { role } = this.state
-    role.menus = this.auth.current.getMenus()
-    role.AuthTime = dayjs().format('YYYY-MM-DD HH:mm:ss')
-    role.AuthUserId = 'abcd'
-    role.ModifyUserId = 'abcd'
+    const { RoleId } = this.state.role         // 点击某一行时触发onRow回调设置的状态数据role
+    let menus = this.auth.current.getMenus() // 调用子组件授权菜单组件的方法,收集选中的菜单ids
     // 请求更新角色的菜单
-    const result = await reqUpdateRoleWithPermission(role)
-    if (result.status === 0) {
-      message.success('成功')
+    const { status, msg } = await reqAuthRoleMenu({ RoleId, menus })
+    if (status === 0) {
+      message.success(msg)
       this.setState({
-        isShowAuth: false
+        isShowAuth: false,
+        role: {}            // 更新用户授权后, 强制把当前选中的role清空,迫使用户再次点击角色进行设置
       })
       this.getRoles()
     }
   }
 
-  // table选中的一行(监听onClick等事件监听)
+  // 1. 在点击Table某一行触发, 点击单选按钮不触发
+  // 2. 设置Table每一行的属性,可以监听click,onDoubleClick等事件
+  // 3. 在Table中设置该属性,就是对每行设置了监听
   onRow = (role) => {
     return {
       onClick: e => {
-        // 当点击后,设置当前行的role为state中的role
         this.setState({ role })
       }
     }
@@ -145,6 +146,7 @@ export default class Role extends Component {
       <Card title={title}>
         <Table
           bordered
+          size="small"
           rowKey="RoleId"
           dataSource={roles}
           columns={this.columns}
@@ -152,9 +154,13 @@ export default class Role extends Component {
           rowSelection={{
             type: 'radio',
             selectedRowKeys: [role.RoleId],
-            onSelect: (role) => this.setState({ role })
+            // 选中单选按钮的回调
+            onSelect: (role) => {
+              this.setState({ role })
+            }
           }}
-          onRow={(role) => this.onRow(role)}        // 可以点击行选中一行
+          // onRow={(role) => this.onRow(role)}        // 可以点击行选中一行
+          onRow={this.onRow}
         />
         <Modal
           title="添加角色"
@@ -168,7 +174,17 @@ export default class Role extends Component {
           <AddRole setForm={form => this.form = form} />
         </Modal>
         <Modal
-          title="角色授权"
+          title={
+            <Button size="default" type="link" style={{ color: '#000' }}>{role.RoleName}角色授权</Button>
+            // <Tag size="large">{role.RoleName}角色授权</Tag>
+          }
+          // modal框整体样式
+          style={{
+            top: 30,
+            minWidth: 500,
+          }}
+          // modal框内容区域样式
+          bodyStyle={{ paddingTop: 0, paddingBottom: 0 }}
           visible={isShowAuth}
           onOk={this.updateRoleMenus}
           onCancel={() => {
@@ -177,7 +193,6 @@ export default class Role extends Component {
         >
           <AuthRole role={role} ref={this.auth} />
         </Modal>
-
       </Card>
     )
   }

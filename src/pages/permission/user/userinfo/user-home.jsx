@@ -248,7 +248,7 @@ export default class UserHome extends Component {
           </Button>
         </Col>
         <Col span={2}>
-          <Button type="primary" disabled={selectedRowKeys.length == 1 ? false : true} onClick={
+          <Button type="primary" disabled={selectedRowKeys.length === 1 ? false : true} onClick={
             () => this.props.history.push('/permission/user/single/addupdate', { user_id: selectedRowKeys[0] })}>
             修改用户
           </Button>
@@ -261,7 +261,7 @@ export default class UserHome extends Component {
         <Col span={2}>
           <Button
             type="primary"
-            disabled={selectedRowKeys.length == 1 ? false : true}
+            disabled={selectedRowKeys.length === 1 ? false : true}
             onClick={this.showAddUsersRolesModal}>
             设置角色
           </Button>

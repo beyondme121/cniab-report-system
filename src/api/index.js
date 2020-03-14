@@ -1,8 +1,6 @@
 import ajax from "./ajax";
-
 let BASE = '/api'
 
-// export const reqLoginToken = (username, password) => ajax(BASE + '/login', { username, password }, 'POST')
 
 // ----------------- 商品分类 -----------------
 // 获取分类列表
@@ -44,7 +42,7 @@ export const reqUpdateProductStatus = (id, status) => ajax(BASE + '/product/upda
 // 角色管理
 export const reqRoleList = () => ajax(BASE + '/role')
 export const reqAddRole = (role) => ajax(BASE + '/role', role, 'POST')
-export const reqUpdateRoleWithPermission = role => ajax(BASE + '/role/update', role, 'POST')
+export const reqAuthRoleMenu = role => ajax(BASE + '/role/update', role, 'POST')
 export const reqGetRoleByUserId = user_id => ajax(BASE + '/role/getByUserId', { user_id })      // 根据用户id查询用户的角色
 
 // 菜单管理

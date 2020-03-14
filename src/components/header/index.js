@@ -13,7 +13,7 @@ import { logout } from '../../redux/actions/user-actions'
 
 const { Header } = Layout
 const { Item } = Menu
-const { Option } = Select
+// const { Option } = Select
 
 function HeaderNav(menuList) {
   const { pathname } = useLocation()

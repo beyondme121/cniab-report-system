@@ -19,6 +19,7 @@ const IconFont = Icon.createFromIconfontCN({
 class Menu extends Component {
   state = {
     menuFormVisiable: false,
+    menuListState: this.props.menuList
   }
 
   initColumns = () => {
@@ -105,9 +106,19 @@ class Menu extends Component {
     this.initColumns()
   }
 
+  fetchMenuListByAPI = async () => {
+    await this.props.getMenuList()
+  }
+
+  componentDidMount() {
+    if (this.props.menuList.length === 0) {
+      this.fetchMenuListByAPI()
+    }
+  }
+
   render() {
     const { menuFormVisiable } = this.state
-    const menuList = this.props.menuList || {}
+    const menuList = this.props.menuList
     const menu = this.menu || {}
     const title = (
       <Button type="primary" onClick={() => {

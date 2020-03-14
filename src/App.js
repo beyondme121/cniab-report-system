@@ -4,9 +4,11 @@ import {
   Switch,
   Route
 } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 
 import Login from './pages/login'
 import Admin from './pages/admin'
+// import NotFound from './components/not-found'
 // import Example from './test/test-lifecycle'
 // import TableTest from './test/test-table-search'
 
@@ -15,24 +17,10 @@ function App() {
     <Router>
       <Switch>
         <Route path="/login" component={Login} />
+        {/* <Route path="/notfound" component={NotFound} /> */}
         <Route path="/" component={Admin} />
       </Switch>
     </Router>
   )
 }
-
-// class App extends React.Component {
-//   render() {
-//     return (
-//       <Router>
-//         <Switch>
-//           <Route path="/login" component={Login} />
-//           {/* <Route path="/table" component={TableTest} /> */}
-//           <Route path="/" component={Admin} />
-//         </Switch>
-//       </Router>
-//     )
-//   }
-// }
-
 export default App

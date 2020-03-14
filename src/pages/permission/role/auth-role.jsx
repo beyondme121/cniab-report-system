@@ -80,26 +80,17 @@ class AuthRole extends Component {
   }
 
   render() {
-    const { menuList, checkedKeys } = this.state
+    const { checkedKeys } = this.state
     const { role } = this.props
     const formItemLayout = {
       labelCol: { span: 6 },  // 左侧label的宽度
       wrapperCol: { span: 15 }, // 右侧包裹的宽度
     }
 
-    // if (menuList.length > 0) {
-    //   this.getTreeNodes(menuList)
-    // } else {
-    //   return null
-    // }
-
     if (!this.menuList) return null
 
     return (
       <div>
-        <Item label="角色名称" {...formItemLayout}>
-          <Input value={role.RoleName} disabled />
-        </Item>
         <Tree
           checkable
           defaultExpandAll={true}

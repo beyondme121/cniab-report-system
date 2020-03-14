@@ -1,4 +1,4 @@
-import React, { Component, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types'
 import { Transfer } from 'antd'
 import { reqRoleList, reqGetRoleByUserId } from '../../../../api'
@@ -58,21 +58,22 @@ class AddRoleIntoUser extends PureComponent {
     }
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   const user_id = nextProps.user_id
-  //   this.getRoleListByUserId(user_id)
-  // }
+  componentWillReceiveProps(nextProps) {
+    console.log("nextProps.user_id", nextProps.user_id)
+    const user_id = nextProps.user_id
+    this.getRoleListByUserId(user_id)
+  }
 
   // 测试替换componentWillReceiveProps
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    console.log("this.props.user_id: ", this.props.user_id)
-    console.log("prevProps.user_id: ", prevProps.user_id)
-    if (this.props.user_id !== prevProps.user_id) {
-      console.log("componentDidUpdate")
-      const user_id = this.props.user_id
-      this.getRoleListByUserId(user_id)
-    }
-  }
+  // componentDidUpdate(prevProps, prevState, snapshot) {
+  //   console.log("this.props.user_id: ", this.props.user_id)
+  //   console.log("prevProps.user_id: ", prevProps.user_id)
+  //   if (this.props.user_id !== prevProps.user_id) {
+  //     console.log("componentDidUpdate")
+  //     const user_id = this.props.user_id
+  //     this.getRoleListByUserId(user_id)
+  //   }
+  // }
 
   componentDidMount() {
     this.getRoleList()
